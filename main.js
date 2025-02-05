@@ -8,7 +8,7 @@ const cors = require("cors");
 const fs = require("fs");
 
 // Add this at the top of your server code
-const DEBUG_MODE = process.env.NODE_ENV === "production"; // or set manually
+const DEBUG_MODE = process.env.NODE_ENV !== "production"; // or set manually
 
 const logger = {
   info: (...args) => {},
@@ -83,7 +83,6 @@ function createServer() {
             port: 22,
           });
           const directoryPath = path || "/";
-          console.log("Listing directory:", directoryPath);
           const list = await sftp.list(directoryPath);
           await sftp.end();
           res.json(list);
@@ -147,9 +146,6 @@ function createServer() {
         throw new Error("Missing required parameters");
       }
   
-      console.log(req.body)
-      console.log(fullPath)
-  
       if (protocol === "sftp") {
         sftp = new Client();
         try {
@@ -179,7 +175,6 @@ function createServer() {
           sftp.end();
   
         } catch (err) {
-          console.error("SFTP Download Error:", err);
           if (!res.headersSent) {
             res.status(500).json({
               error: "SFTP Download Error",
@@ -239,7 +234,6 @@ function createServer() {
         });
       }
     } catch (err) {
-      console.error("Download Error:", err);
       if (!res.headersSent) {
         res.status(500).json({
           error: "Download Error",
